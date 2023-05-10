@@ -1,11 +1,6 @@
 package Searching;
-
-import java.io.File;
 import java.io.FileInputStream;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.Scanner;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.*;;
@@ -25,12 +20,15 @@ public class MazeMap extends JFrame {
 
         private int x,y;
         private int costToReach, costToReachGoal;
+        private int mx,my;
 
-        public Node(int x, int y, Node parent){
+        public Node(int x, int y, Node parent,int mx,int my){
 
             this.x = x;
             this.y = y;
             this.parent = parent;
+            this.mx = mx;
+            this.my = my;
 
         }
 
