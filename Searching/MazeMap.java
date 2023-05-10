@@ -1,11 +1,18 @@
 package Searching;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class MazeMap {
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.*;;
+
+public class MazeMap extends JFrame {
+
+    private MapPanel mapPanel;
 
     public Node initialPoint;
     public Node goalPoint;
@@ -29,12 +36,119 @@ public class MazeMap {
 
     }
 
-    public MazeMap(String fileName){
+    public class MapPanel extends JPanel{
 
+        public MapPanel (){
+
+            
+
+        }
+
+        public void paintComponent(Graphics g){
+
+            super.paintComponent(g);
+
+            int startX = 0, startY =0;
+
+            for(int i=0; i<mazeMatrix.length; i++){
+
+                startX = 0;
+
+                for(int k=0; k<mazeMatrix[0].length; k++){
+
+                    g.setColor(Color.BLACK);
+
+                    if(mazeMatrix[i][k] == 0) g.fill3DRect(startX, startY, 50,50,true);
+
+                    else if(mazeMatrix[i][k] == 65){
+
+                        g.setColor(Color.RED);
+
+                        g.fill3DRect(startX, startY, 50,50,true);
+
+                    }
+
+                    else if(mazeMatrix[i][k] == 66){
+
+                        g.setColor(Color.GREEN);
+
+                        g.fill3DRect(startX, startY, 50,50,true);
+
+                    }
+
+                    startX +=50;
+
+                }
+
+                startY+=50;
+
+            }
+
+            drawTheLines(g);
+
+        }
+
+        public void drawTheLines(Graphics g){
+
+            g.setColor(Color.GRAY);
+
+            int width = 50;
+
+            for(int i=0; i<mazeMatrix[0].length; i++){
+
+                g.drawLine(width,0,width,mazeMatrix.length*50);
+
+                width+=50;
+
+                
+            }
+
+            width = 50;
+
+            for(int i=0; i<=mazeMatrix.length; i++){
+
+                g.drawLine(0,width,mazeMatrix[0].length*50,width);
+
+                width+=50;
+
+                
+            }
+
+        }
+
+
+
+    }
+
+    public MazeMap(String fileName){
+    
         mazeMatrix = createMazeMap(fileName);
 
+        this.setLocationRelativeTo(this);
 
+        this.setResizable(false);
 
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+        this.setSize(mazeMatrix[0].length*50, mazeMatrix.length*50);
+
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+        int x = (dim.width - this.getWidth()) / 2;
+        int y = (dim.height - this.getHeight()) / 2;
+        this.setLocation(x, y-40);
+
+        this.setVisible(true);
+
+        mapPanel = new MapPanel();
+
+        mapPanel.setBackground(Color.DARK_GRAY);
+
+        mapPanel.setPreferredSize(new Dimension(mazeMatrix[0].length*50, mazeMatrix.length*50));
+
+        this.add(mapPanel);
+
+        this.pack();
     }
 
     public int [][] createMazeMap(String fileName){
@@ -45,7 +159,7 @@ public class MazeMap {
 
         try{
 
-            Scanner scan = new Scanner(new File(fileName));
+            Scanner scan = new Scanner(new FileInputStream(fileName));
 
             while(scan.hasNextLine()){
 
@@ -60,7 +174,7 @@ public class MazeMap {
 
             matrix = new int[rowNumber][colNumber];
 
-            scan = new Scanner(new File(fileName));
+            scan = new Scanner(new FileInputStream(fileName));
 
             int i = 0;
 
@@ -68,9 +182,9 @@ public class MazeMap {
 
                 String inputString = scan.nextLine();
 
-                for(int k = 0; k < inputString.length(); i++){
+                for(int k = 0; k < inputString.length(); k++){
 
-                    char chr = inputString.charAt(i);
+                    char chr = inputString.charAt(k);
 
                     if(chr == '#') matrix[i][k] = 0;
 
@@ -122,9 +236,12 @@ public class MazeMap {
 
     public static void main(String[] args) {
 
-        MazeMap map = new MazeMap("map1.txt");
+    
+        MazeMap map = new MazeMap("map1.txt.txt");
 
         map.showMazeMatrix();
+
+
         
     }
 
