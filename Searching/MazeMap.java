@@ -1,5 +1,9 @@
 package Searching;
+
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Scanner;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -7,28 +11,169 @@ import java.awt.*;;
 
 public class MazeMap extends JFrame {
 
-    private MapPanel mapPanel;
+    public MapPanel mapPanel;
 
     public Node initialPoint;
     public Node goalPoint;
 
-    private int [][] mazeMatrix;
+    public int [][] mazeMatrix;
+    public int [][] copyMatrix;
+    public ArrayList<Node> exploredList;
 
-    private class Node{
+    private int totalSpace = 0;
 
-        private Node parent;
+    public HashSet<Node> nodeSet;
 
-        private int x,y;
+    public class Node{
+
+        public Node parent;
+
+        public ArrayList<Node> childs;
+
+        public int x,y;
         private int costToReach, costToReachGoal;
-        private int mx,my;
+        public int mx,my;
 
         public Node(int x, int y, Node parent,int mx,int my){
 
+            this.childs = new ArrayList<>();
             this.x = x;
             this.y = y;
             this.parent = parent;
             this.mx = mx;
             this.my = my;
+
+        }
+
+        public Node(int mx,int my){
+            this.mx = mx;
+            this.my = my;
+        }
+
+        public boolean equals(Object o){
+
+            if(o == null) return false;
+
+            if(o.getClass() != this.getClass()) return false;
+
+            Node tempNode = (Node)o;
+
+            return tempNode.mx == this.mx && tempNode.my == this.my;
+
+        }
+
+        /*
+         * that method returns cost to reach this node
+         */                                                                                   
+
+        public int g(){
+
+            return Math.abs(mx - initialPoint.mx) + Math.abs(my - initialPoint.my);                      
+                                                                                                                                
+        } 
+
+        /*
+         * that method returns cost to reach goal point
+         */
+
+        public int h(){
+
+            return Math.abs(mx - goalPoint.mx) + Math.abs(my - goalPoint.my);
+
+        }
+
+        /*
+         * above two method is valuable for informed search such as greedy-first ans A* search algorithms
+         */
+
+        public void drawNodeToMap(Graphics g){
+
+            g.setColor(Color.YELLOW);
+
+            g.fill3DRect(x,y, 50, 50,true);
+            
+        }
+
+        public String toString(){
+            return "MapX : "+x+"\n"+"MapY : "+y+"\n"+"MatrixX : "+mx+"\n"+"MatrixY : "+my+"\n"+"Reach Cost : "+costToReach+"\n"+"Goal Cost : "+costToReachGoal+"\n";
+        }
+
+    }
+
+    public void connectAllNodestoEachOther(Node currNode){
+
+        if(nodeSet.size() == totalSpace) return;
+
+        if(currNode.mx+1 < copyMatrix.length && (copyMatrix[currNode.mx+1][currNode.my] == 1 || copyMatrix[currNode.mx+1][currNode.my] == 66) ) {
+
+    
+                Node tempNode = new Node(currNode.my*50, (currNode.mx+1)*50,currNode, currNode.mx+1, currNode.my);
+
+                currNode.childs.add(tempNode);
+
+                copyMatrix[currNode.mx+1][currNode.my] = 0;
+
+                nodeSet.add(tempNode);
+
+        }
+
+        if(currNode.mx-1 >=0 && (copyMatrix[currNode.mx-1][currNode.my] == 1 || copyMatrix[currNode.mx-1][currNode.my] == 66) ) {
+
+            
+
+                Node tempNode = new Node(currNode.my*50, (currNode.mx-1)*50,currNode, currNode.mx-1, currNode.my);
+
+                currNode.childs.add(tempNode);
+
+                copyMatrix[currNode.mx-1][currNode.my] = 0;
+
+                nodeSet.add(tempNode);
+
+            
+
+            
+
+            
+
+        } 
+
+        if(currNode.my+1 < copyMatrix[0].length && (copyMatrix[currNode.mx][currNode.my+1] == 1 || copyMatrix[currNode.mx][currNode.my+1] == 66) ) {
+
+            
+
+                Node tempNode = new Node((currNode.my+1)*50, (currNode.mx)*50,currNode, currNode.mx, currNode.my+1);
+
+                currNode.childs.add(tempNode);
+
+                copyMatrix[currNode.mx][currNode.my+1] = 0;
+
+                nodeSet.add(tempNode);
+
+            
+
+        }
+
+        if(currNode.my-1 >=0 && (copyMatrix[currNode.mx][currNode.my-1] == 1 || copyMatrix[currNode.mx][currNode.my-1] == 66)) {
+
+            
+
+            
+
+                Node tempNode = new Node((currNode.my-1)*50, (currNode.mx)*50,currNode, currNode.mx, currNode.my-1);
+
+                currNode.childs.add(tempNode);
+
+                copyMatrix[currNode.mx][currNode.my-1] = 0;
+
+                nodeSet.add(tempNode);
+
+            
+
+        }
+
+        for(Node child : currNode.childs){
+
+            connectAllNodestoEachOther(child);
 
         }
 
@@ -82,6 +227,8 @@ public class MazeMap extends JFrame {
 
             }
 
+            for(int i=0; i<exploredList.size(); i++) exploredList.get(i).drawNodeToMap(g);
+
             drawTheLines(g);
 
         }
@@ -114,13 +261,25 @@ public class MazeMap extends JFrame {
 
         }
 
+        public void drawAllNodes(Graphics g,Node currNode){
 
+            if(currNode.equals(initialPoint) == false) currNode.drawNodeToMap(g);
+
+            for(Node child : currNode.childs) drawAllNodes(g, child);
+
+            if(currNode.childs.size() == 0) return;
+
+        }
 
     }
 
     public MazeMap(String fileName){
     
-        mazeMatrix = createMazeMap(fileName);
+        createMazeMap(fileName);
+
+        nodeSet = new LinkedHashSet<>();
+
+        exploredList = new ArrayList<>();
 
         this.setLocationRelativeTo(this);
 
@@ -136,8 +295,6 @@ public class MazeMap extends JFrame {
         int y = (dim.height - this.getHeight()) / 2;
         this.setLocation(x, y-40);
 
-        this.setVisible(true);
-
         mapPanel = new MapPanel();
 
         mapPanel.setBackground(Color.DARK_GRAY);
@@ -147,13 +304,14 @@ public class MazeMap extends JFrame {
         this.add(mapPanel);
 
         this.pack();
+
+        connectAllNodestoEachOther(initialPoint);
+
     }
 
-    public int [][] createMazeMap(String fileName){
+    public void createMazeMap(String fileName){
 
         int rowNumber = 0, colNumber = 0;
-
-        int matrix[][] = null;
 
         try{
 
@@ -170,7 +328,9 @@ public class MazeMap extends JFrame {
 
             scan.close();
 
-            matrix = new int[rowNumber][colNumber];
+            mazeMatrix = new int[rowNumber][colNumber];
+
+            copyMatrix = new int[rowNumber][colNumber];
 
             scan = new Scanner(new FileInputStream(fileName));
 
@@ -184,13 +344,29 @@ public class MazeMap extends JFrame {
 
                     char chr = inputString.charAt(k);
 
-                    if(chr == '#') matrix[i][k] = 0;
+                    if(chr == '#') mazeMatrix[i][k] = 0;
 
-                    else if(chr == ' ') matrix[i][k] = 1;
+                    else if(chr == ' ') { mazeMatrix[i][k] = 1; totalSpace++; }
 
-                    else if(chr == 'A') matrix[i][k] = 65;
+                    else if(chr == 'A'){
 
-                    else if(chr == 'B') matrix[i][k] = 66;
+                        mazeMatrix[i][k] = 65;
+
+                        initialPoint = new Node(k*50,i*50,null,i,k);
+
+                    } 
+
+                    else if(chr == 'B') {
+
+                        mazeMatrix[i][k] = 66;
+
+                        totalSpace++;
+
+                        goalPoint = new Node(k*50,i*50,null,i,k);
+
+                    }
+
+                    copyMatrix[i][k] = mazeMatrix[i][k];
 
                 }
 
@@ -207,7 +383,6 @@ public class MazeMap extends JFrame {
 
         }
 
-        return matrix;
     }
 
 
@@ -232,13 +407,35 @@ public class MazeMap extends JFrame {
 
     }
 
+    public void showCopyMatrix(){
+
+        for(int i=0; i<copyMatrix.length; i++){
+
+            for(int k=0; k<copyMatrix[0].length; k++){
+
+                if(copyMatrix[i][k] == 0) System.out.print("#");
+
+                else if(copyMatrix[i][k] == 1) System.out.print(" ");
+
+                else if(copyMatrix[i][k] == 65) System.out.print("A");
+
+                else if(copyMatrix[i][k] == 66) System.out.print("B");
+                
+            }
+
+            System.out.println();
+        }
+
+    }
+
+    public void showMazeMap(){
+        this.setVisible(true);
+    }
+
     public static void main(String[] args) {
 
-    
-        MazeMap map = new MazeMap("map1.txt.txt");
-
-        map.showMazeMatrix();
-
+        
+        
 
         
     }
