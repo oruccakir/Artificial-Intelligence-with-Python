@@ -24,7 +24,7 @@ public class MazeMap extends JFrame {
 
     public HashSet<Node> nodeSet;
 
-    public class Node{
+    public class Node implements Comparable<Node>{
 
         public Node parent;
 
@@ -96,6 +96,13 @@ public class MazeMap extends JFrame {
 
         public String toString(){
             return "MapX : "+x+"\n"+"MapY : "+y+"\n"+"MatrixX : "+mx+"\n"+"MatrixY : "+my+"\n"+"Reach Cost : "+costToReach+"\n"+"Goal Cost : "+costToReachGoal+"\n";
+        }
+
+        @Override
+        public int compareTo(Node o) {
+            if(this.h() < o.h()) return -1;
+            else if(this.h() > o.h()) return 1;
+            else return 0;
         }
 
     }
@@ -231,6 +238,10 @@ public class MazeMap extends JFrame {
 
             drawTheLines(g);
 
+
+            if(MazeSolution.searchType.equals("greedy_first") || MazeSolution.searchType.equals("A*"))
+                writeToMapManhattanDistance(g);
+
         }
 
         public void drawTheLines(Graphics g){
@@ -268,6 +279,21 @@ public class MazeMap extends JFrame {
             for(Node child : currNode.childs) drawAllNodes(g, child);
 
             if(currNode.childs.size() == 0) return;
+
+        }
+
+        public void writeToMapManhattanDistance(Graphics g){
+
+            for(Node node : nodeSet){
+
+                node.costToReachGoal = node.h();
+
+                g.setColor(Color.white);
+
+                if(!node.equals(goalPoint)) g.drawString(""+node.costToReachGoal,node.x+15,node.y+15);
+
+            }
+
 
         }
 
