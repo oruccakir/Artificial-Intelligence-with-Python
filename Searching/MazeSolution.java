@@ -2,8 +2,10 @@ package Searching;
 
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -143,6 +145,17 @@ public class MazeSolution {
 
     }
 
+    public boolean goalTest (Node currNode){
+
+        MazeMap.Node up = map.new Node(currNode.mx+1,currNode.my);
+        MazeMap.Node left = map.new Node(currNode.mx,currNode.my-1);
+        MazeMap.Node down = map.new Node(currNode.mx-1,currNode.my);
+        MazeMap.Node right = map.new Node(currNode.mx,currNode.my+1);
+
+        return up.equals(map.goalPoint) || left.equals(map.goalPoint) || right.equals(map.goalPoint) || down.equals(map.goalPoint);
+
+    }
+
 
     public void solveWithDepth_First_Search(){
 
@@ -175,7 +188,7 @@ public class MazeSolution {
             * goal test examine whether goal point is reached or not
             */
 
-            if(currentNode.equals(map.goalPoint)){                                     
+            if(goalTest(currentNode)){                                     
 
                 while(currentNode != null){
 
@@ -251,7 +264,7 @@ public class MazeSolution {
             * goal test examine whether goal point is reached or not
             */
 
-            if(currentNode.equals(map.goalPoint)){                                     
+            if(goalTest(currentNode)){                                     
 
                 while(currentNode != null){
 
@@ -308,7 +321,7 @@ public class MazeSolution {
 
             //If the frontier is empty, then no solution. 
 
-            if(frontierQueue.isEmpty()){
+            if(frontierStack.isEmpty()){
 
                 System.err.println("There is no solution in this map");
 
@@ -318,7 +331,7 @@ public class MazeSolution {
 
             //Remove a node from the frontier.
 
-            MazeMap.Node currentNode = frontierQueue.poll();
+            MazeMap.Node currentNode = frontierStack.pop();
 
             num_explored++;
 
@@ -331,7 +344,7 @@ public class MazeSolution {
             * goal test examine whether goal point is reached or not
             */
 
-            if(currentNode.equals(map.goalPoint)){                                     
+            if(goalTest(currentNode)){                                     
 
                 while(currentNode != null){
 
@@ -349,13 +362,13 @@ public class MazeSolution {
 
             //Add the node to the explored set.
 
-            //Collections.sort(currentNode.childs);
+            Collections.sort(currentNode.childs);
            
             for(MazeMap.Node child : currentNode.childs){
 
-                if(frontierQueue.contains(child) == false &&  exploredSet.contains(child) == false ) {
+                if(frontierStack.contains(child) == false &&  exploredSet.contains(child) == false ) {
 
-                    frontierQueue.add(child);
+                    frontierStack.push(child);
 
                 }
 
@@ -389,7 +402,7 @@ public class MazeSolution {
 
             //If the frontier is empty, then no solution. 
 
-            if(frontierQueue.isEmpty()){
+            if(frontierStack.isEmpty()){
 
                 System.err.println("There is no solution in this map");
 
@@ -399,7 +412,7 @@ public class MazeSolution {
 
             //Remove a node from the frontier.
 
-            MazeMap.Node currentNode = frontierQueue.poll();
+            MazeMap.Node currentNode = frontierStack.pop();
 
             num_explored++;
 
@@ -412,7 +425,7 @@ public class MazeSolution {
             * goal test examine whether goal point is reached or not
             */
 
-            if(currentNode.equals(map.goalPoint)){                                     
+            if(goalTest(currentNode)){                                     
 
                 while(currentNode != null){
 
@@ -430,18 +443,28 @@ public class MazeSolution {
 
             //Add the node to the explored set.
 
+            Collections.sort(currentNode.childs);
+
            
             for(MazeMap.Node child : currentNode.childs){
 
-                if(frontierQueue.contains(child) == false &&  exploredSet.contains(child) == false ) {
+                if(frontierStack.contains(child) == false &&  exploredSet.contains(child) == false ) {
 
-                    if(child.g()+child.h() <= currentNode.g() + currentNode.h()) frontierQueue.add(child);
-
+                    frontierStack.push(child);
+                    
                 }
 
             }
 
-           
+            ArrayList<Node> tempList = new ArrayList<>(frontierStack);
+
+            Collections.sort(tempList);
+
+            frontierStack.clear();
+
+            for(int i=0; i<tempList.size(); i++) frontierStack.push(tempList.get(i));
+
+
             try{
 
                 Thread.sleep(100);
@@ -457,10 +480,10 @@ public class MazeSolution {
 
     }
 
-    
+
     public static void main(String[] args) {
 
-        MazeSolution solution = new MazeSolution("maze1.txt",  GREEDY_FIRST_SEARCH );
+        MazeSolution solution = new MazeSolution("maze2.txt",GREEDY_FIRST_SEARCH);
         solution.map.showMazeMap();
         solution.solveTheMaze();
         solution.showTheSolutionPath();

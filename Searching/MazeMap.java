@@ -68,7 +68,7 @@ public class MazeMap extends JFrame {
 
         public int g(){
 
-            return Math.abs(mx - initialPoint.mx) + Math.abs(my - initialPoint.my);                      
+            return costToReach;                     
                                                                                                                                 
         } 
 
@@ -100,9 +100,25 @@ public class MazeMap extends JFrame {
 
         @Override
         public int compareTo(Node o) {
-            if(this.h() < o.h()) return -1;
-            else if(this.h() > o.h()) return 1;
-            else return 0;
+
+            if(MazeSolution.searchType.equals(MazeSolution.GREEDY_FIRST_SEARCH)){
+
+                if(this.h() > o.h()) return -1;
+                else if(this.h() < o.h()) return 1;
+                else return 0;
+
+            }
+
+            else if (MazeSolution.searchType.equals(MazeSolution.A_SEARCH)){
+
+                if(this.h() + this.g() > o.h()+o.g()) return -1;
+                else if(this.h()+this.g() < o.h() +o.g()) return 1;
+                else return 0;
+
+
+            }
+            else return -1;
+
         }
 
     }
@@ -111,28 +127,36 @@ public class MazeMap extends JFrame {
 
         if(nodeSet.size() == totalSpace) return;
 
-        if(currNode.mx+1 < copyMatrix.length && (copyMatrix[currNode.mx+1][currNode.my] == 1 || copyMatrix[currNode.mx+1][currNode.my] == 66) ) {
+        if(!currNode.equals(goalPoint) && currNode.mx+1 < copyMatrix.length && (copyMatrix[currNode.mx+1][currNode.my] == 1 || copyMatrix[currNode.mx+1][currNode.my] == 66) ) {
 
     
                 Node tempNode = new Node(currNode.my*50, (currNode.mx+1)*50,currNode, currNode.mx+1, currNode.my);
 
+                tempNode.costToReach = currNode.costToReach+1;
+
                 currNode.childs.add(tempNode);
 
-                copyMatrix[currNode.mx+1][currNode.my] = 0;
+                //copyMatrix[currNode.mx+1][currNode.my] = 0;
+
+                copyMatrix[currNode.mx][currNode.my] = 0;
 
                 nodeSet.add(tempNode);
 
         }
 
-        if(currNode.mx-1 >=0 && (copyMatrix[currNode.mx-1][currNode.my] == 1 || copyMatrix[currNode.mx-1][currNode.my] == 66) ) {
+        if(!currNode.equals(goalPoint) && currNode.mx-1 >=0 && (copyMatrix[currNode.mx-1][currNode.my] == 1 || copyMatrix[currNode.mx-1][currNode.my] == 66) ) {
 
             
 
                 Node tempNode = new Node(currNode.my*50, (currNode.mx-1)*50,currNode, currNode.mx-1, currNode.my);
 
+                tempNode.costToReach = currNode.costToReach+1;
+
                 currNode.childs.add(tempNode);
 
-                copyMatrix[currNode.mx-1][currNode.my] = 0;
+                //copyMatrix[currNode.mx-1][currNode.my] = 0;
+
+                copyMatrix[currNode.mx][currNode.my] = 0;
 
                 nodeSet.add(tempNode);
 
@@ -144,15 +168,19 @@ public class MazeMap extends JFrame {
 
         } 
 
-        if(currNode.my+1 < copyMatrix[0].length && (copyMatrix[currNode.mx][currNode.my+1] == 1 || copyMatrix[currNode.mx][currNode.my+1] == 66) ) {
+        if(!currNode.equals(goalPoint) && currNode.my+1 < copyMatrix[0].length && (copyMatrix[currNode.mx][currNode.my+1] == 1 || copyMatrix[currNode.mx][currNode.my+1] == 66) ) {
 
             
 
                 Node tempNode = new Node((currNode.my+1)*50, (currNode.mx)*50,currNode, currNode.mx, currNode.my+1);
 
+                tempNode.costToReach = currNode.costToReach+1;
+
                 currNode.childs.add(tempNode);
 
-                copyMatrix[currNode.mx][currNode.my+1] = 0;
+                //copyMatrix[currNode.mx][currNode.my+1] = 0;
+
+                copyMatrix[currNode.mx][currNode.my] = 0;
 
                 nodeSet.add(tempNode);
 
@@ -160,7 +188,7 @@ public class MazeMap extends JFrame {
 
         }
 
-        if(currNode.my-1 >=0 && (copyMatrix[currNode.mx][currNode.my-1] == 1 || copyMatrix[currNode.mx][currNode.my-1] == 66)) {
+        if(!currNode.equals(goalPoint) && currNode.my-1 >=0 && (copyMatrix[currNode.mx][currNode.my-1] == 1 || copyMatrix[currNode.mx][currNode.my-1] == 66)) {
 
             
 
@@ -168,9 +196,13 @@ public class MazeMap extends JFrame {
 
                 Node tempNode = new Node((currNode.my-1)*50, (currNode.mx)*50,currNode, currNode.mx, currNode.my-1);
 
+                tempNode.costToReach = currNode.costToReach+1;
+
                 currNode.childs.add(tempNode);
 
-                copyMatrix[currNode.mx][currNode.my-1] = 0;
+                //copyMatrix[currNode.mx][currNode.my-1] = 0;
+
+                copyMatrix[currNode.mx][currNode.my] = 0;
 
                 nodeSet.add(tempNode);
 
@@ -242,6 +274,8 @@ public class MazeMap extends JFrame {
             if(MazeSolution.searchType.equals("greedy_first") || MazeSolution.searchType.equals("A*"))
                 writeToMapManhattanDistance(g);
 
+            if(MazeSolution.searchType.equals(MazeSolution.A_SEARCH))
+               writeToMapReachCost(g);
         }
 
         public void drawTheLines(Graphics g){
@@ -294,6 +328,18 @@ public class MazeMap extends JFrame {
 
             }
 
+
+        }
+
+        public void writeToMapReachCost(Graphics g){
+
+            for(Node node : nodeSet){
+
+                g.setColor(Color.white);
+
+                if(!node.equals(goalPoint)) g.drawString(""+node.costToReach,node.x+15,node.y+30);
+
+            }
 
         }
 
