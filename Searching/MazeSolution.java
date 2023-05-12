@@ -483,7 +483,7 @@ public class MazeSolution {
 
     public static void main(String[] args) {
 
-        MazeSolution solution = new MazeSolution("maze2.txt",GREEDY_FIRST_SEARCH);
+        MazeSolution solution = new MazeSolution("maze2.txt",DEPTH_FIRST_SEARCH);
         solution.map.showMazeMap();
         solution.solveTheMaze();
         solution.showTheSolutionPath();
@@ -491,6 +491,55 @@ public class MazeSolution {
         
         
     }
+
+
+    /*  # Adversarial Search :
+     *  MiniMax approach :
+     *  MAX (X) aims to maximize score
+     *  MIN (O) aims to minimize score
+     * 
+     * S0 --> is initial state 
+     * Player(s) --> returns which player to move in state se
+     * Actions(s) --> returns legal moves in state s
+     * Result(s,a) --> returns state after action a taken in state s
+     * Terminal(s) --> checks if state s is a terminal state
+     * Utılıty(s) : final numerical value for terminal state s
+     * 
+     * Given action (a) state (s) 
+     * 
+     * --> MAX picks action a in ACTIONS(s) that produces
+     * highest value of MIN-VALUE(Result(s,a))
+     * 
+     * --> MIN picks action a in ACTIONS(s) that produces
+     * smallest value of MAX-VALUE(Results(s,a))
+     * 
+     *  ALGORITHM for ADVERSARIAL Search :
+     * 
+     *  function MAX-VALUE(state):
+     *  
+     * ---> if TERMINAL(state) : return UTILITY(state)
+     * 
+     * v = minus infinite 
+     * 
+     * for action in ACTIONS(state): 
+     * v = MAX(v,MIN-VALUE(RESULT(state,action)))
+     * 
+     * return v
+     * 
+     *   function MIN-VALUE(state):
+     *  
+     *   if TERMINAL(state): return UTILITY(state) 
+     *   v = ∞
+     *   for action in ACTIONS(state): 
+     *   v = MIN(v, MAX-VALUE(RESULT(state, action))) 
+     *   return v
+     * 
+     * total possible Tic-Tac-Toe games : 255168
+     * 
+     * EVALUATION FUNCTION : is a function that estimates the expected 
+     * utılıty of the game from a given state and it is essential part of adversarial search
+     * 
+     */
 
     
 }
