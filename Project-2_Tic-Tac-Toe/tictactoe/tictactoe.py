@@ -4,10 +4,19 @@ Tic Tac Toe Player
 
 import math
 import copy
+import sys
 
 X = "X"
 O = "O"
 EMPTY = None
+
+node_listx = []
+node_listo = []
+
+class Node():
+    def __init__(self,t,point):
+        self.t = t
+        self.point = point
 
 
 def initial_state():
@@ -36,10 +45,14 @@ def player(board):
             else:
                 numberOFEmpty=numberOFEmpty+1
     
-    if(numberOFEmpty == 9 or numberOfX < numberOfO):
+    if(numberOFEmpty == 9):
         return X
-    else:
+    elif(numberOfX < numberOfO):
+        return X
+    elif(numberOfO < numberOfX):
         return O
+    
+    return X
 
 
     raise NotImplementedError
@@ -97,7 +110,7 @@ def result(board, action):
 
     if(whose_turn == X):
         copy_matrix[i][j] = X
-    else:
+    elif(whose_turn == O):
         copy_matrix[i][j] = O
 
     ## and return the changed copy matrix without changing the original board
@@ -223,4 +236,24 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+
+    ## if the board is a terminal board return None
+
+    if(terminal(board)):
+        return None
+    
+    
+    
+    ##raise NotImplementedError
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
