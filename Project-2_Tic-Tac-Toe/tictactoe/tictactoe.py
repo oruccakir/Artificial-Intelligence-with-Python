@@ -10,13 +10,12 @@ X = "X"
 O = "O"
 EMPTY = None
 
-node_listx = []
-node_listo = []
 
 class Node():
     def __init__(self,t,point):
         self.t = t
         self.point = point
+        
 
 
 def initial_state():
@@ -53,7 +52,7 @@ def player(board):
         return O
     
     return X
-
+    
 
     raise NotImplementedError
 
@@ -88,13 +87,15 @@ def result(board, action):
     ## if action is not a valid move then raise an exception
 
     ## out of board control
-
+    
     if(action[0] < 0 or action[0] > 2) :
         raise Exception("invalid move")
     if(action[1] < 0 or action[1] > 2):
         raise Exception("invalid move")
     
+    
     ## the control of movement to already filled place
+
 
     i = action[0]
     j = action[1]
@@ -242,9 +243,77 @@ def minimax(board):
     if(terminal(board)):
         return None
     
+    ## get the current player
+    current_player = player(board)
+
+    ## initialize the best_score and best_action variables
+    if current_player == X:
+        best_score = float("-inf")
+    else:
+        best_score = float("inf")
+    best_action = None
+
+    ## iterate over all possible actions
+    for action in actions(board):
+        ## get the result of making the action on the board
+        new_board = result(board, action)
+
+        ## calculate the score for the new board using the minimax algorithm
+        score = minimax_score(new_board)
+
+        ## update the best_score and best_action variables based on the current player
+        if current_player == X:
+            if score > best_score:
+                best_score = score
+                best_action = action
+        else:
+            if score < best_score:
+                best_score = score
+                best_action = action
     
+    ## return the best action
+    return best_action
+        
+
+    
+
     
     ##raise NotImplementedError
+
+def minimax_score(board):
+    """
+    Returns the score of the board based on the minimax algorithm.
+    """
+    ## if the board is a terminal board, return the utility value
+    if terminal(board):
+        return utility(board)
+
+    ## get the current player
+    current_player = player(board)
+
+    ## initialize the score variable based on the current player
+    if current_player == X:
+        best_score = float("-inf")
+    else:
+        best_score = float("inf")
+
+    ## iterate over all possible actions
+    for action in actions(board):
+        ## get the result of making the action on the board
+        new_board = result(board, action)
+
+        ## calculate the score for the new board using the minimax_score function
+        score = minimax_score(new_board)
+
+        ## update the best_score variable based on the current player
+        if current_player == X:
+            best_score = max(best_score, score)
+        else:
+            best_score = min(best_score, score)
+
+    ## return the best_score
+    return best_score
+
 
 
 
