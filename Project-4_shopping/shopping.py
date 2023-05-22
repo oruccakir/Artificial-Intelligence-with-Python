@@ -3,6 +3,7 @@ import sys
 
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+import pandas as pd
 
 TEST_SIZE = 0.4
 
@@ -59,6 +60,11 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
+
+    shopping = pd.read_csv("shopping.csv")
+
+    print(shopping)
+
     raise NotImplementedError
 
 
