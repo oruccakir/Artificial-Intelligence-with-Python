@@ -3,6 +3,7 @@ import random
 import time
 
 
+
 class Nim():
 
     def __init__(self, initial=[1, 3, 5, 7,12,8]):
@@ -275,6 +276,25 @@ def train(n):
     # Return the trained AI
     return player
 
+def show_as_matrix(list):
+    matrix = []
+    for element in list:
+        element_list = []
+        for i in range(element):
+            element_list.append("#")
+        matrix.append(element_list)
+
+    index = 0    
+    for row in matrix:
+        print(f"Pile {index} -> ",end=' ')
+        for element in row:
+            print(element,end=' ')
+        print()
+        index = index +1
+    
+    print()
+
+
 
 def play(ai, human_player=None):
     """
@@ -299,6 +319,10 @@ def play(ai, human_player=None):
         for i, pile in enumerate(game.piles):
             print(f"Pile {i}: {pile}")
         print()
+
+        # print as matrix
+        print("Matrix representation")
+        show_as_matrix(game.piles)
 
         # Compute available actions
         available_actions = Nim.available_actions(game.piles)
