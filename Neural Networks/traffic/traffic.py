@@ -3,13 +3,14 @@ import numpy as np
 import os
 import sys
 import tensorflow as tf
+from PIL import Image
 
 from sklearn.model_selection import train_test_split
 
 EPOCHS = 10
 IMG_WIDTH = 30
 IMG_HEIGHT = 30
-NUM_CATEGORIES = 43
+NUM_CATEGORIES = 5
 TEST_SIZE = 0.4
 
 
@@ -58,6 +59,34 @@ def load_data(data_dir):
     be a list of integer labels, representing the categories for each of the
     corresponding `images`.
     """
+    images = []
+    labels = []
+
+    # Get the subdirectories in the data directory
+    categories = sorted(os.listdir(data_dir))
+
+    for category in categories:
+        category_dir = os.path.join(data_dir, category)
+
+        # Get the image files in the category directory
+        image_files = os.listdir(category_dir)
+
+        for image_file in image_files:
+            image_path = os.path.join(category_dir, image_file)
+
+            # Load the image as a numpy ndarray
+            image = Image.open(image_path)
+            image = image.resize((IMG_WIDTH, IMG_HEIGHT))
+
+            # Convert the image to a numpy ndarray
+            image = np.array(image)
+
+            # Append the image and label to the lists
+            images.append(image)
+            labels.append(int(category))
+
+    return images, labels
+
     raise NotImplementedError
 
 
