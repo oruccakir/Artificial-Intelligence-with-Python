@@ -483,7 +483,7 @@ public class MazeSolution {
 
     public static void main(String[] args) {
 
-        MazeSolution solution = new MazeSolution("maze2.txt",GREEDY_FIRST_SEARCH);
+        MazeSolution solution = new MazeSolution("maze1.txt",GREEDY_FIRST_SEARCH);
         solution.map.showMazeMap();
         solution.solveTheMaze();
         solution.showTheSolutionPath();
