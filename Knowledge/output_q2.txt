@@ -1,7 +1,7 @@
-/favicon.ico 12
-/gRmkl 8
-/banner.jpg 4
-/oruc.ico 1
-/gRmkxxxcv 1
-/favico.ico 1
-/bannanne.jpg 1
+/favicon.ico 57
+/gRmkl 38
+/banner.jpg 19
+/favico.ico 6
+/oruc.ico 5
+/gRmkxxxcv 5
+/bannanne.jpg 5
