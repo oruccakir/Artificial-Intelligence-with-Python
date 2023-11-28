@@ -6,7 +6,7 @@ def get_file_content_as_list(filename="log_q2.txt"):
         # read the content of the file
         for line in file:
             line = line.strip()
-            line = re.findall(r'[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ - - \[.*\].*\"GET.*',line)
+            line = re.findall(r'[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+.*-.*-.*\[.*\].*\"GET.*',line)
             
             if(len(line) != 0):
                 line = re.findall(r'.*HTTP',line[0])

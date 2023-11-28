@@ -118,8 +118,6 @@ def get_output_dictionary(entries):
 
 class Entry:
 
-    
-
     def __init__(self,ip_address,date,time):
         self.ip_address = ip_address
         self.date = date
@@ -143,9 +141,8 @@ class Entry:
 
 contents = get_file_content_as_list()
 
-
 entries = create_entries(contents)
 
 results =get_output_dictionary(entries)
 
-write_results_to_file(entries,results,)
+write_results_to_file(entries,results)
