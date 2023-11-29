@@ -6,8 +6,9 @@ def get_file_content_as_list(filename="log_q1.txt"):
         # read the content of the file
         for line in file:
             line = line.strip()
-            line = re.findall(r'.*]',line)[0]
-            content.append(line)
+            line = re.findall(r'[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+.*-.*-.*\[.*\].*',line)
+            if len(line) >= 1:
+                content.append(line[0])
 
     return content
 
@@ -37,6 +38,7 @@ def create_entries(contents):
         str3 = re.findall(r'\b[0-9]{2}:[0-9]{2}:[0-9]{2}',content)[0]
         new_entry = Entry(str1,str2,str3)
         entries.append(new_entry)
+        print(str1)
     
     return entries
 
@@ -139,7 +141,7 @@ class Entry:
     
     
 
-contents = get_file_content_as_list()
+contents = get_file_content_as_list(filename="file.txt")
 
 entries = create_entries(contents)
 
