@@ -13,7 +13,9 @@ def get_file_content_as_list(filename="log_q2.txt"):
                 line = re.split(r'/',line[0])
                 line = re.split(r' ',line[len(line)-1])
                 if(len(line[0]) != 0):
-                    content.append("/"+line[0])
+                    line = re.findall(r'^[A-Za-z0-9._-]+$',line[0])
+                    if len(line) > 0:
+                        content.append("/"+line[0])
             
 
     return content
@@ -70,6 +72,7 @@ class Entry:
     def __str__(self):
         return f"{self.filename} {self.frequency}"
     
+    # method overwritting for sorting according to given conditions
     def __lt__(self,other):
         if(self.frequency > other.frequency):
             return True
