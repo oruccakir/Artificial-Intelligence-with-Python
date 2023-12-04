@@ -184,7 +184,7 @@ class Entry:
     
     
 
-contents = get_file_content_as_list(filename="file.txt")
+contents = get_file_content_as_list(filename="log_q1.txt")
 
 entries = create_entries(contents)
 
