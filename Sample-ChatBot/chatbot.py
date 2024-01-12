@@ -1,24 +1,26 @@
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
+import torch
 
-def chat():
-    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-    model = GPT2LMHeadModel.from_pretrained("gpt2")
+# Load pre-trained model tokenizer (vocabulary)
+tokenizer = GPT2Tokenizer.from_pretrained('gpt3')
 
-    # Chatbot function
-    while True:
-        # User input
-        input_text = input("User: ")
-        if input_text.lower() in ['quit', 'exit', 'bye']:
-            break
+# Load pre-trained model (weights)
+model = GPT2LMHeadModel.from_pretrained('gpt3')
 
-        # Encode the input text and add end of string token
-        input_ids = tokenizer.encode(input_text + tokenizer.eos_token, return_tensors='pt')
+# Set the model to evaluation mode to deactivate the DropOut modules
+model.eval()
 
-        # Generate a response
-        output = model.generate(input_ids, max_length=1000, num_return_sequences=1, no_repeat_ngram_size=2, early_stopping=True)
-        response = tokenizer.decode(output[0], skip_special_tokens=True)
+# Function to ask a question to the chatbot
+def ask_question(question, length=50):
+    inputs = tokenizer.encode(question, return_tensors='pt')
+    outputs = model.generate(inputs, max_length=length, num_return_sequences=1)
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-        print("Bot:", response)
+# Example conversation
+prompt = ''
+while prompt != "quit":
+    prompt = input("You:... ")
+    answer = ask_question(prompt)
+    print(answer)
 
-if __name__ == "__main__":
-    chat()
+
