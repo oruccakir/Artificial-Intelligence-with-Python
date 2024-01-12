@@ -2,10 +2,10 @@ from transformers import GPT2LMHeadModel, GPT2Tokenizer
 import torch
 
 # Load pre-trained model tokenizer (vocabulary)
-tokenizer = GPT2Tokenizer.from_pretrained('gpt3')
+tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
 
 # Load pre-trained model (weights)
-model = GPT2LMHeadModel.from_pretrained('gpt3')
+model = GPT2LMHeadModel.from_pretrained('gpt2')
 
 # Set the model to evaluation mode to deactivate the DropOut modules
 model.eval()
